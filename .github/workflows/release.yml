@@ -1,0 +1,203 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+env:
+  SASS_BINARY_PATH: "vendor/binding.node"
+
+jobs:
+  release-linux:
+    name: Linux release artifacts
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+    strategy:
+      matrix:
+        include:
+          - node: 14
+            gcc: "gcc-8"
+            gpp: "g++-8"
+            os: ubuntu-20.04
+          - node: 16
+            gcc: "gcc-8"
+            gpp: "g++-8"
+            os: ubuntu-20.04
+          - node: 18
+            gcc: "gcc-8"
+            gpp: "g++-8"
+            os: ubuntu-20.04
+          - node: 19
+            gcc: "gcc-8"
+            gpp: "g++-8"
+            os: ubuntu-20.04
+          - node: 20
+            gcc: "gcc-10"
+            gpp: "g++-10"
+            os: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Update NPM
+        run: npm i npm -g
+
+      - name: Setup GCC/G++
+        run: sudo apt-get install ${{ matrix.gcc }} ${{ matrix.gpp }}
+
+      - name: Install
+        run: npm install --unsafe-perm
+        env:
+          SKIP_SASS_BINARY_DOWNLOAD_FOR_CI: true
+          CC: ${{ matrix.gcc }}
+          CXX: ${{ matrix.gpp }}
+          LINK: ${{ matrix.gcc }}
+          LINKXX: ${{ matrix.gpp }}
+
+      - name: Get binding name
+        run: echo "ASSET_NAME=$(node -p "require('./lib/extensions.js').getBinaryName()")" >> $GITHUB_ENV
+
+      - name: Upload release artifacts
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: vendor/binding.node
+          asset_name: ${{ env.ASSET_NAME }}
+          tag: ${{ github.ref }}
+
+  release-alpine:
+    name: Alpine release artifacts
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    container:
+      image: node:${{ matrix.node }}-alpine
+    strategy:
+      fail-fast: false
+      matrix:
+        node:
+          - 14
+          - 16
+          - 18
+          - 19
+          - 20
+    steps:
+      - name: Alpine build tools
+        run: apk add --no-cache python3 make git gcc g++
+
+      - name: Update NPM
+        run: npm i npm -g
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install
+        run: npm install --unsafe-perm
+        env:
+          SKIP_SASS_BINARY_DOWNLOAD_FOR_CI: true
+
+      - name: Get binding name
+        run: echo "ASSET_NAME=$(node -p "require('./lib/extensions.js').getBinaryName()")" >> $GITHUB_ENV
+
+      - name: Upload release artifacts
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: vendor/binding.node
+          asset_name: ${{ env.ASSET_NAME }}
+          tag: ${{ github.ref }}
+
+  release-darwin:
+    name: Darwin release artifacts
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        node:
+          - 14
+          - 16
+          - 18
+          - 19
+          - 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Update NPM
+        run: npm i npm -g
+
+      - name: Install
+        run: npm install --unsafe-perm
+        env:
+          SKIP_SASS_BINARY_DOWNLOAD_FOR_CI: true
+
+      - name: Get binding name
+        run: echo "ASSET_NAME=$(node -p "require('./lib/extensions.js').getBinaryName()")" >> $GITHUB_ENV
+
+      - name: Upload release artifacts
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: vendor/binding.node
+          asset_name: ${{ env.ASSET_NAME }}
+          tag: ${{ github.ref }}
+
+  release-windows:
+    name: Windows release artifacts
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        node:
+          - 14
+          - 16
+          - 18
+          - 19
+          - 20
+        architecture:
+          - x64
+          - x86
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          architecture: ${{ matrix.architecture }}
+
+      - name: Update NPM
+        run: npm i npm -g
+
+      - name: Install
+        run: npm install --unsafe-perm
+        env:
+          SKIP_SASS_BINARY_DOWNLOAD_FOR_CI: true
+
+      - name: Get binding name
+        run: echo "ASSET_NAME=$(node -p "require('./lib/extensions.js').getBinaryName()")" >> $env:GITHUB_ENV
+
+      - name: Upload release artifacts
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: vendor/binding.node
+          asset_name: ${{ env.ASSET_NAME }}
+          tag: ${{ github.ref }}

@@ -357,7 +357,7 @@ describe('api', function() {
       });
     });
 
-    it('should should resolve imports depth first', function (done) {
+    it('should resolve imports depth first', function (done) {
       var actualImportOrder = [];
       var expectedImportOrder = [
         'a', '_common', 'vars', 'struct', 'a1', 'common', 'vars', 'struct', 'b', 'b1'

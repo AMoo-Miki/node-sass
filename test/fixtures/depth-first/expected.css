@@ -7,6 +7,12 @@
 .myvars {
   content: "1"; }
 
+.class-a {
+  content: "class-a"; }
+
+.class-b {
+  content: "class-b"; }
+
 .a1 {
   content: "a1"; }
 
@@ -21,6 +27,12 @@
 
 .myvars {
   content: "2"; }
+
+.class-a {
+  content: "class-a"; }
+
+.class-b {
+  content: "class-b"; }
 
 .b1 {
   content: "b1"; }

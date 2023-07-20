@@ -1,4 +1,4 @@
-name: Build bindings for Linux releases
+name: Build bindings for Linux
 
 on:
   push:
@@ -14,6 +14,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - node: 14
+            gcc: "gcc-8"
+            gpp: "g++-8"
+            os: ubuntu-20.04
           - node: 16
             gcc: "gcc-8"
             gpp: "g++-8"
@@ -40,6 +44,9 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
+      - name: Update NPM
+        run: npm i npm -g
+
       - name: Setup GCC/G++
         run: sudo apt-get install ${{ matrix.gcc }} ${{ matrix.gpp }}
 
@@ -56,7 +63,7 @@ jobs:
         run: npm test
 
       - uses: actions/upload-artifact@v3
-        if: github.repository_owner == 'sass' && github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request'
         with:
           name: ${{ matrix.node }}
           path: vendor/

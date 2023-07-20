@@ -1,4 +1,4 @@
-name: Build bindings for Alpine releases
+name: Build bindings for Alpine
 
 on:
   push:
@@ -15,6 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         node:
+          - 14
           - 16
           - 18
           - 19
@@ -23,6 +24,9 @@ jobs:
     steps:
       - name: Install Alpine build tools
         run: apk add --no-cache python3 make git gcc g++
+
+      - name: Update NPM
+        run: npm i npm -g
 
       - uses: actions/checkout@v3
 
@@ -35,7 +39,7 @@ jobs:
         run: npm test
 
       - uses: actions/upload-artifact@v3
-        if: github.repository_owner == 'sass' && github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request'
         with:
           name: ${{ matrix.node }}
           path: vendor/

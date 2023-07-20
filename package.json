@@ -1,26 +1,31 @@
 {
-  "name": "node-sass",
-  "version": "9.0.0",
-  "libsass": "3.5.5",
+  "name": "@amoo-miki/node-sass",
+  "version": "9.0.0-libsass-3.6.5",
+  "libsass": "3.6.5",
   "description": "Wrapper around libsass",
   "license": "MIT",
-  "bugs": "https://github.com/sass/node-sass/issues",
-  "homepage": "https://github.com/sass/node-sass",
+  "bugs": "https://github.com/AMoo-Miki/node-sass/issues",
+  "homepage": "https://github.com/AMoo-Miki/node-sass",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sass/node-sass"
+    "url": "https://github.com/AMoo-Miki/node-sass"
   },
-  "author": {
-    "name": "Andrew Nesbitt",
-    "email": "andrewnez@gmail.com",
-    "url": "http://andrew.github.com"
-  },
+  "authors": [
+    {
+      "name": "Andrew Nesbitt",
+      "email": "andrewnez@gmail.com",
+      "url": "http://andrew.github.com"
+    },
+    {
+      "name": "AMoo-Miki"
+    }
+  ],
   "engines": {
-    "node": ">=16"
+    "node": ">=14"
   },
   "main": "lib/index.js",
   "nodeSassConfig": {
-    "binarySite": "https://github.com/sass/node-sass/releases/download"
+    "binarySite": "https://github.com/AMoo-Miki/node-sass/releases/download"
   },
   "bin": {
     "node-sass": "bin/node-sass"
@@ -71,7 +76,7 @@
   "devDependencies": {
     "eslint": "^8.0.0",
     "fs-extra": "^10.0.0",
-    "mocha": "^9.0.1",
+    "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "rimraf": "^3.0.2",
     "unique-temp-dir": "^1.0.0"
